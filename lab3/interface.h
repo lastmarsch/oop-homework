@@ -1,0 +1,28 @@
+#ifndef INTERFACE_H
+#define INTERFACE_H
+#include "polynom.h"
+#include <QMainWindow>
+
+QT_BEGIN_NAMESPACE
+namespace Ui { class Interface; }
+QT_END_NAMESPACE
+
+class Interface : public QMainWindow
+{
+    Q_OBJECT
+
+public:
+    Interface(QWidget *parent = nullptr);
+    ~Interface();
+
+private slots:
+    void on_pushButton_clicked();
+
+    void on_pushButton_2_clicked();
+
+private:
+    Ui::Interface *ui;
+    Polynom p;
+    QByteArray numberToChar(number a);
+};
+#endif // INTERFACE_H
