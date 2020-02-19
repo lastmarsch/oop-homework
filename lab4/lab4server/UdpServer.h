@@ -19,7 +19,6 @@ signals:
     void error(QString error);
 
 private:
-    QUdpSocket * sock;
     Polynom p;
 
     void processTheDatagram(QString &data);

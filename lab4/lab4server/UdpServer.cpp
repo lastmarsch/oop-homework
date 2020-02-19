@@ -5,14 +5,13 @@
 
 UdpServer::UdpServer()
 {
-    sock = new QUdpSocket(this);
-    connect(sock, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
+    connect(this, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
 }
 
 void UdpServer::start()
 {
     std::cout << "Bind to port 1920\n";
-    sock->bind(QHostAddress::LocalHost, 1920, QUdpSocket::ReuseAddressHint);
+    this->bind(QHostAddress::LocalHost, 1920, QUdpSocket::ReuseAddressHint);
 }
 
 void UdpServer::onReadyRead()
@@ -20,10 +19,10 @@ void UdpServer::onReadyRead()
     std::cout << "Received packet from client\n";
     QByteArray datagram;
     QString data = "";
-    while(sock->hasPendingDatagrams())
+    while(this->hasPendingDatagrams())
     {
-        datagram.resize(static_cast<int>(sock->pendingDatagramSize()));
-        sock->readDatagram(datagram.data(), datagram.size());
+        datagram.resize(static_cast<int>(this->pendingDatagramSize()));
+        this->readDatagram(datagram.data(), datagram.size());
         data += datagram;
     }
     qDebug() << data;
@@ -35,7 +34,7 @@ void UdpServer::processTheDatagram(QString& data)
     QStringList packet = data.split(":");
     if (packet.size() < 1) {
         QByteArray datagram = QString("ERR:[Server] Received incorrect packet.").toUtf8();
-        sock->writeDatagram(datagram, QHostAddress::LocalHost, 1919);
+        this->writeDatagram(datagram, QHostAddress::LocalHost, 1919);
         std::cout << "Send ERR\n";
         qDebug() << datagram;
         return;
@@ -45,7 +44,7 @@ void UdpServer::processTheDatagram(QString& data)
     {
         if (packet.size() < 7) {
             QByteArray datagram = QString("ERR:[Server] Received incorrect packet.").toUtf8();
-            sock->writeDatagram(datagram, QHostAddress::LocalHost, 1919);
+            this->writeDatagram(datagram, QHostAddress::LocalHost, 1919);
             std::cout << "Send ERR\n";
             return;
         }
@@ -67,7 +66,7 @@ void UdpServer::processTheDatagram(QString& data)
             datagram = QString("ERR:[Server] Equation has no roots.").toUtf8();
             std::cout << "Send ERR\n";
         }
-        sock->writeDatagram(datagram, QHostAddress::LocalHost, 1919);
+        this->writeDatagram(datagram, QHostAddress::LocalHost, 1919);
         qDebug() << datagram;
         return;
     }
@@ -77,7 +76,7 @@ void UdpServer::processTheDatagram(QString& data)
                                .arg(numberToChar(p.A()).constData())
                                .arg(numberToChar(p.B()).constData())
                                .arg(numberToChar(p.C()).constData())).toUtf8();
-        sock->writeDatagram(datagram, QHostAddress::LocalHost, 1919);
+        this->writeDatagram(datagram, QHostAddress::LocalHost, 1919);
         qDebug() << datagram;
         std::cout << "Send VIEW\n";
         return;
