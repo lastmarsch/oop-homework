@@ -21,7 +21,6 @@ signals:
     void error(QString& msg);
 
 private:
-    QUdpSocket * sock;
     void processTheDatagram(QString data);
 };
 

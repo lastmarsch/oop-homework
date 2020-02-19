@@ -3,9 +3,8 @@
 
 UdpClient::UdpClient(QObject *parent)
 {
-    sock = new QUdpSocket(this);
-    sock->bind(QHostAddress::LocalHost, 1919, QUdpSocket::ReuseAddressHint);
-    connect(sock, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
+    this->bind(QHostAddress::LocalHost, 1919, QUdpSocket::ReuseAddressHint);
+    connect(this, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
     connect(this, SIGNAL(dataReceivedRoots(QString&, QString&)), parent, SLOT(setText(QString&, QString&)));
     connect(this, SIGNAL(dataReceivedPoly(QString&)), parent, SLOT(setText(QString&)));
     connect(parent, SIGNAL(sendData(QStringList&)), this, SLOT(sendData(QStringList&)));
@@ -29,17 +28,17 @@ void UdpClient::sendData(QStringList& data)
     if (data[0] == "SHOW")
         datagram = data[0].toUtf8();
 
-    sock->writeDatagram(datagram, QHostAddress::LocalHost, 1920);
+    this->writeDatagram(datagram, QHostAddress::LocalHost, 1920);
 }
 
 void UdpClient::onReadyRead()
 {
     QByteArray datagram;
     QString data = "";
-    while(sock->hasPendingDatagrams())
+    while(this->hasPendingDatagrams())
     {
-        datagram.resize(static_cast<int>(sock->pendingDatagramSize()));
-        sock->readDatagram(datagram.data(), datagram.size());
+        datagram.resize(static_cast<int>(this->pendingDatagramSize()));
+        this->readDatagram(datagram.data(), datagram.size());
         data += datagram;
     }
     qDebug() << data;
